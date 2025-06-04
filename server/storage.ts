@@ -212,7 +212,12 @@ export class MemStorage implements IStorage {
 
     certificationsData.forEach(cert => {
       const id = this.currentId++;
-      this.certificationsData.set(id, { ...cert, id });
+      this.certificationsData.set(id, { 
+        ...cert, 
+        id, 
+        credentialId: cert.credentialId || null,
+        credentialUrl: cert.credentialUrl || null
+      });
     });
   }
 

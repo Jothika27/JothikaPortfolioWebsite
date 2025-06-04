@@ -28,6 +28,8 @@
   --portfolio-primary: 215 16% 12%; /* #1a1a1a */
   --portfolio-secondary: 210 11% 98%; /* #f8f9fa */
   --portfolio-text: 215 25% 27%; /* #2d3748 */
+  --jothika-blue: 220 91% 56%; /* #3b82f6 */
+  --jothika-purple: 250 84% 54%; /* #8b5cf6 */
 }
 
 .dark {
@@ -88,7 +90,18 @@
   }
 
   .gradient-bg {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, #1e1b4b 100%);
+    background: linear-gradient(135deg, hsl(var(--jothika-blue)) 0%, hsl(var(--jothika-purple)) 100%);
+  }
+
+  .jothika-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  }
+
+  .jothika-gradient-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .text-portfolio-primary {
@@ -105,6 +118,18 @@
 
   .bg-portfolio-secondary {
     background-color: hsl(var(--portfolio-secondary));
+  }
+
+  .skill-card {
+    @apply bg-white p-4 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:scale-105;
+  }
+
+  .experience-card {
+    @apply bg-white rounded-xl border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-blue-200;
+  }
+
+  .project-card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2;
   }
 }
 
