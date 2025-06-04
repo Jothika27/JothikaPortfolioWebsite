@@ -1,207 +1,263 @@
-import { portfolioItems, caseStudies, type PortfolioItem, type InsertPortfolioItem, type CaseStudy, type InsertCaseStudy } from "@shared/schema";
+import { 
+  profile, skills, experience, projects, education, certifications,
+  type Profile, type InsertProfile, type Skill, type InsertSkill,
+  type Experience, type InsertExperience, type Project, type InsertProject,
+  type Education, type InsertEducation, type Certification, type InsertCertification
+} from "@shared/schema";
 
 export interface IStorage {
-  // Portfolio Items
-  getPortfolioItems(): Promise<PortfolioItem[]>;
-  getPortfolioItemsByCategory(category: string): Promise<PortfolioItem[]>;
-  getPortfolioItem(id: number): Promise<PortfolioItem | undefined>;
-  createPortfolioItem(item: InsertPortfolioItem): Promise<PortfolioItem>;
+  // Profile
+  getProfile(): Promise<Profile | undefined>;
   
-  // Case Studies
-  getCaseStudies(): Promise<CaseStudy[]>;
-  getCaseStudy(id: number): Promise<CaseStudy | undefined>;
-  getCaseStudyByPortfolioItem(portfolioItemId: number): Promise<CaseStudy | undefined>;
-  createCaseStudy(caseStudy: InsertCaseStudy): Promise<CaseStudy>;
+  // Skills
+  getSkills(): Promise<Skill[]>;
+  getSkillsByCategory(category: string): Promise<Skill[]>;
+  
+  // Experience
+  getExperience(): Promise<Experience[]>;
+  getExperienceById(id: number): Promise<Experience | undefined>;
+  
+  // Projects
+  getProjects(): Promise<Project[]>;
+  getFeaturedProjects(): Promise<Project[]>;
+  getProjectById(id: number): Promise<Project | undefined>;
+  
+  // Education
+  getEducation(): Promise<Education[]>;
+  
+  // Certifications
+  getCertifications(): Promise<Certification[]>;
 }
 
 export class MemStorage implements IStorage {
-  private portfolioItems: Map<number, PortfolioItem>;
-  private caseStudies: Map<number, CaseStudy>;
-  private currentPortfolioId: number;
-  private currentCaseStudyId: number;
+  private profileData: Profile | undefined;
+  private skillsData: Map<number, Skill>;
+  private experienceData: Map<number, Experience>;
+  private projectsData: Map<number, Project>;
+  private educationData: Map<number, Education>;
+  private certificationsData: Map<number, Certification>;
+  private currentId: number;
 
   constructor() {
-    this.portfolioItems = new Map();
-    this.caseStudies = new Map();
-    this.currentPortfolioId = 1;
-    this.currentCaseStudyId = 1;
+    this.skillsData = new Map();
+    this.experienceData = new Map();
+    this.projectsData = new Map();
+    this.educationData = new Map();
+    this.certificationsData = new Map();
+    this.currentId = 1;
     
-    // Initialize with sample data
+    // Initialize with Jothika's data
     this.initializeData();
   }
 
   private initializeData() {
-    // Portfolio Items
-    const portfolioData: InsertPortfolioItem[] = [
-      {
-        title: "E-commerce Platform",
-        description: "Modern shopping experience with intuitive navigation and seamless checkout process.",
-        category: "web",
-        imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        tags: ["React", "TypeScript", "Tailwind CSS"],
-        colors: ["#3B82F6", "#10B981", "#8B5CF6"],
-        featured: true,
-      },
-      {
-        title: "Fitness Tracking App",
-        description: "Comprehensive health and fitness tracking with personalized workout plans.",
-        category: "mobile",
-        imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        tags: ["React Native", "Firebase", "Node.js"],
-        colors: ["#EF4444", "#F59E0B", "#6366F1"],
-        featured: true,
-      },
-      {
-        title: "Eco-Friendly Brand",
-        description: "Complete brand identity for sustainable lifestyle company with eco-conscious values.",
-        category: "branding",
-        imageUrl: "https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        tags: ["Branding", "Logo Design", "Style Guide"],
-        colors: ["#059669", "#14B8A6", "#10B981"],
-        featured: false,
-      },
-      {
-        title: "Analytics Dashboard",
-        description: "Comprehensive data visualization platform for business intelligence and reporting.",
-        category: "ui",
-        imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        tags: ["UI/UX", "Data Visualization", "Dashboard"],
-        colors: ["#06B6D4", "#3B82F6", "#8B5CF6"],
-        featured: true,
-      },
-      {
-        title: "Creative Agency Site",
-        description: "Bold and innovative website design showcasing creative services and portfolio work.",
-        category: "web",
-        imageUrl: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        tags: ["Web Design", "Creative", "Portfolio"],
-        colors: ["#EC4899", "#F97316", "#EF4444"],
-        featured: false,
-      },
-      {
-        title: "Food Delivery App",
-        description: "Intuitive food ordering experience with real-time tracking and seamless payments.",
-        category: "mobile",
-        imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        tags: ["Mobile App", "UX Design", "Food Tech"],
-        colors: ["#EA580C", "#DC2626", "#FBBF24"],
-        featured: false,
-      },
+    // Profile Data - Jothika R
+    this.profileData = {
+      id: 1,
+      name: "Jothika R",
+      title: "Software Engineer",
+      location: "Coimbatore, India",
+      email: "jothikajo272001@gmail.com",
+      phone: "+91-6385919611",
+      linkedin: "linkedin.com/in/jothika-r-407787265/",
+      bio: "Experienced Software Engineer with 2+ years in Java, Spring Boot, and Angular development. Specialized in microservices architecture, cloud technologies, and agile development practices.",
+      profileImage: "https://images.unsplash.com/photo-1494790108755-2616c24df853?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
+    };
+
+    // Skills Data
+    const skillsData: InsertSkill[] = [
+      // Languages
+      { category: "languages", name: "Java", level: 5, icon: "☕" },
+      { category: "languages", name: "TypeScript", level: 4, icon: "💻" },
+      { category: "languages", name: "SQL", level: 4, icon: "🗃️" },
+      
+      // Frameworks
+      { category: "frameworks", name: "Spring Boot", level: 5, icon: "🍃" },
+      { category: "frameworks", name: "Spring MVC", level: 4, icon: "🏗️" },
+      { category: "frameworks", name: "Microservices", level: 4, icon: "🔧" },
+      { category: "frameworks", name: "Hibernate", level: 4, icon: "💾" },
+      { category: "frameworks", name: "JPA", level: 4, icon: "📋" },
+      { category: "frameworks", name: "Spring WebFlux", level: 4, icon: "⚡" },
+      { category: "frameworks", name: "Angular", level: 4, icon: "🅰️" },
+      { category: "frameworks", name: "Lombok", level: 3, icon: "🛠️" },
+      { category: "frameworks", name: "Jasper", level: 3, icon: "📊" },
+      { category: "frameworks", name: "Kafka", level: 3, icon: "📡" },
+      
+      // Tools
+      { category: "tools", name: "GitLab", level: 4, icon: "🦊" },
+      { category: "tools", name: "GitHub", level: 4, icon: "🐙" },
+      { category: "tools", name: "Docker", level: 3, icon: "🐳" },
+      { category: "tools", name: "Maven", level: 4, icon: "🔨" },
+      { category: "tools", name: "Splunk", level: 3, icon: "🔍" },
+      { category: "tools", name: "AWS S3", level: 3, icon: "☁️" },
+      { category: "tools", name: "EC2", level: 3, icon: "🖥️" },
+      { category: "tools", name: "Elastic Search", level: 3, icon: "🔍" },
+      { category: "tools", name: "Jira", level: 4, icon: "📝" },
+      { category: "tools", name: "DataDog", level: 3, icon: "🐕" },
+      { category: "tools", name: "Postman", level: 4, icon: "📮" },
+      { category: "tools", name: "SOAP UI", level: 3, icon: "🧼" },
+      
+      // Databases
+      { category: "databases", name: "MySQL", level: 4, icon: "🐬" },
+      { category: "databases", name: "Oracle", level: 3, icon: "🏛️" },
+      { category: "databases", name: "H2", level: 3, icon: "💽" },
+      { category: "databases", name: "MongoDB", level: 4, icon: "🍃" },
     ];
 
-    portfolioData.forEach(item => {
-      this.createPortfolioItem(item);
+    skillsData.forEach(skill => {
+      const id = this.currentId++;
+      this.skillsData.set(id, { ...skill, id });
     });
 
-    // Case Studies
-    const caseStudyData: InsertCaseStudy[] = [
+    // Experience Data
+    const experienceData: InsertExperience[] = [
       {
-        title: "E-commerce Redesign",
-        subtitle: "UX/UI Design • 8 weeks",
-        description: "Complete redesign of an e-commerce platform resulting in 40% increase in conversion rates. The project involved extensive user research, prototyping, and iterative testing.",
-        imageUrl: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
-        duration: "8 weeks",
-        category: "E-commerce",
-        metrics: {
-          "Conversion Increase": "40%",
-          "Bounce Rate Reduction": "25%",
-          "Project Duration": "8 Weeks"
-        },
-        content: "Detailed case study content about the e-commerce redesign process, methodology, challenges, and solutions.",
-        portfolioItemId: 1,
+        company: "Zuci Systems",
+        position: "Software Engineer",
+        location: "Chennai, India",
+        startDate: "September 2024",
+        endDate: null,
+        responsibilities: [
+          "Working with AWS S3 bucket to update the email templates",
+          "Maintained and modified certificate data using Jasper, enhancing report accuracy and presentation",
+          "Handled BAU tasks and resolved vulnerabilities in Microservice application",
+          "Analyzed application errors using Datadog logs, identifying root causes and implementing effective solutions",
+          "Deployed code using GitHub Actions. Conducted code reviews, debugging, and testing to ensure high-quality software delivery",
+          "Actively participated in Scrum ceremonies including Sprint Planning, Retrospectives, and Daily Stand-ups"
+        ],
+        technologies: ["Java", "Spring Boot", "AWS S3", "Jasper", "DataDog", "GitHub Actions", "Microservices"]
       },
       {
-        title: "Health App Design",
-        subtitle: "Mobile App • 12 weeks",
-        description: "Comprehensive health tracking application designed to simplify wellness management. Features include medication reminders, symptom tracking, and doctor consultations.",
-        imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
-        duration: "12 weeks",
-        category: "Healthcare",
-        metrics: {
-          "App Store Rating": "4.8★",
-          "Downloads": "50K+",
-          "Development Time": "12 Weeks"
-        },
-        content: "Comprehensive case study on mobile health app development, user research, and design decisions.",
-        portfolioItemId: 2,
-      },
-      {
-        title: "Analytics Dashboard",
-        subtitle: "Data Visualization • 6 weeks",
-        description: "Enterprise-level analytics platform providing real-time insights and customizable reporting. Designed for scalability and complex data visualization needs.",
-        imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
-        duration: "6 weeks",
-        category: "Analytics",
-        metrics: {
-          "Efficiency Boost": "60%",
-          "Data Points": "1M+",
-          "Design Sprint": "6 Weeks"
-        },
-        content: "Deep dive into the analytics dashboard design process, data visualization challenges, and user experience optimization.",
-        portfolioItemId: 4,
-      },
-      {
-        title: "Brand Identity System",
-        subtitle: "Branding • 10 weeks",
-        description: "Complete brand identity development for a sustainable fashion startup. Includes logo design, color palette, typography, and brand guidelines.",
-        imageUrl: "https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
-        duration: "10 weeks",
-        category: "Branding",
-        metrics: {
-          "Brand Recognition": "300%",
-          "Design Iterations": "15",
-          "Brand Development": "10 Weeks"
-        },
-        content: "Complete brand identity development process for sustainable fashion startup, including research, ideation, and implementation.",
-        portfolioItemId: 3,
-      },
+        company: "KGISL - Sony ODC",
+        position: "Junior Java Developer",
+        location: "Coimbatore, India",
+        startDate: "June 2022",
+        endDate: "September 2024",
+        responsibilities: [
+          "Handled BAU tasks and resolved pentest vulnerabilities, developed a bash script to migrate Git repositories",
+          "Monitored EC2 logs and extracted customer information using Splunk Enterprise",
+          "Collaborated with developers to implement new features and optimize existing codebases",
+          "Conducted code reviews, debugging, and testing to ensure high-quality software delivery",
+          "Utilized version control systems (e.g., Git) for source code management and CI/CD pipelines",
+          "Troubleshot and resolved complex technical vulnerability issues in a timely manner"
+        ],
+        technologies: ["Java", "Spring Boot", "AWS EC2", "Splunk", "Git", "CI/CD"]
+      }
     ];
 
-    caseStudyData.forEach(caseStudy => {
-      this.createCaseStudy(caseStudy);
+    experienceData.forEach(exp => {
+      const id = this.currentId++;
+      this.experienceData.set(id, { ...exp, id });
+    });
+
+    // Projects Data
+    const projectsData: InsertProject[] = [
+      {
+        title: "Spring Boot Sample Application",
+        description: "Created a sample user details management application using webflux with integrated MongoDB for efficient data storage and retrieval. Designed and implemented RESTful APIs with Spring Boot and leveraged Spring WebFlux to improve application performance.",
+        technologies: ["Spring Boot", "H2", "JPA", "MySQL", "Swagger", "MongoDB", "Spring WebFlux", "Lombok"],
+        githubUrl: "https://github.com/Jothika27",
+        liveUrl: null,
+        imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        featured: true,
+        category: "backend"
+      }
+    ];
+
+    projectsData.forEach(project => {
+      const id = this.currentId++;
+      this.projectsData.set(id, { ...project, id });
+    });
+
+    // Education Data
+    const educationData: InsertEducation[] = [
+      {
+        degree: "Bachelor of Technology in Information Technology",
+        institution: "Karpagam College of Engineering",
+        location: "Coimbatore, India",
+        startDate: "August 2017",
+        endDate: "April 2021",
+        gpa: null
+      }
+    ];
+
+    educationData.forEach(edu => {
+      const id = this.currentId++;
+      this.educationData.set(id, { ...edu, id });
+    });
+
+    // Certifications Data
+    const certificationsData: InsertCertification[] = [
+      {
+        name: "Splunk Enterprise",
+        issuer: "Splunk",
+        issueDate: "2023",
+        credentialId: null,
+        credentialUrl: null
+      },
+      {
+        name: "Java Certification",
+        issuer: "HackerRank",
+        issueDate: "2022",
+        credentialId: null,
+        credentialUrl: "https://www.hackerrank.com/profile/nanika272001"
+      }
+    ];
+
+    certificationsData.forEach(cert => {
+      const id = this.currentId++;
+      this.certificationsData.set(id, { ...cert, id });
     });
   }
 
-  async getPortfolioItems(): Promise<PortfolioItem[]> {
-    return Array.from(this.portfolioItems.values());
+  // Profile methods
+  async getProfile(): Promise<Profile | undefined> {
+    return this.profileData;
   }
 
-  async getPortfolioItemsByCategory(category: string): Promise<PortfolioItem[]> {
-    return Array.from(this.portfolioItems.values()).filter(
-      item => item.category === category
+  // Skills methods
+  async getSkills(): Promise<Skill[]> {
+    return Array.from(this.skillsData.values());
+  }
+
+  async getSkillsByCategory(category: string): Promise<Skill[]> {
+    return Array.from(this.skillsData.values()).filter(
+      skill => skill.category === category
     );
   }
 
-  async getPortfolioItem(id: number): Promise<PortfolioItem | undefined> {
-    return this.portfolioItems.get(id);
+  // Experience methods
+  async getExperience(): Promise<Experience[]> {
+    return Array.from(this.experienceData.values());
   }
 
-  async createPortfolioItem(insertItem: InsertPortfolioItem): Promise<PortfolioItem> {
-    const id = this.currentPortfolioId++;
-    const item: PortfolioItem = { ...insertItem, id };
-    this.portfolioItems.set(id, item);
-    return item;
+  async getExperienceById(id: number): Promise<Experience | undefined> {
+    return this.experienceData.get(id);
   }
 
-  async getCaseStudies(): Promise<CaseStudy[]> {
-    return Array.from(this.caseStudies.values());
+  // Projects methods
+  async getProjects(): Promise<Project[]> {
+    return Array.from(this.projectsData.values());
   }
 
-  async getCaseStudy(id: number): Promise<CaseStudy | undefined> {
-    return this.caseStudies.get(id);
-  }
-
-  async getCaseStudyByPortfolioItem(portfolioItemId: number): Promise<CaseStudy | undefined> {
-    return Array.from(this.caseStudies.values()).find(
-      study => study.portfolioItemId === portfolioItemId
+  async getFeaturedProjects(): Promise<Project[]> {
+    return Array.from(this.projectsData.values()).filter(
+      project => project.featured
     );
   }
 
-  async createCaseStudy(insertCaseStudy: InsertCaseStudy): Promise<CaseStudy> {
-    const id = this.currentCaseStudyId++;
-    const caseStudy: CaseStudy = { ...insertCaseStudy, id };
-    this.caseStudies.set(id, caseStudy);
-    return caseStudy;
+  async getProjectById(id: number): Promise<Project | undefined> {
+    return this.projectsData.get(id);
+  }
+
+  // Education methods
+  async getEducation(): Promise<Education[]> {
+    return Array.from(this.educationData.values());
+  }
+
+  // Certifications methods
+  async getCertifications(): Promise<Certification[]> {
+    return Array.from(this.certificationsData.values());
   }
 }
 

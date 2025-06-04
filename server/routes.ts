@@ -3,65 +3,98 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Portfolio routes
-  app.get("/api/portfolio", async (req, res) => {
+  // Profile routes
+  app.get("/api/profile", async (req, res) => {
+    try {
+      const profile = await storage.getProfile();
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  // Skills routes
+  app.get("/api/skills", async (req, res) => {
     try {
       const category = req.query.category as string;
-      const items = category ? 
-        await storage.getPortfolioItemsByCategory(category) :
-        await storage.getPortfolioItems();
-      res.json(items);
+      const skills = category ? 
+        await storage.getSkillsByCategory(category) :
+        await storage.getSkills();
+      res.json(skills);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch portfolio items" });
+      res.status(500).json({ message: "Failed to fetch skills" });
     }
   });
 
-  app.get("/api/portfolio/:id", async (req, res) => {
+  // Experience routes
+  app.get("/api/experience", async (req, res) => {
+    try {
+      const experience = await storage.getExperience();
+      res.json(experience);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch experience" });
+    }
+  });
+
+  app.get("/api/experience/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const item = await storage.getPortfolioItem(id);
-      if (!item) {
-        return res.status(404).json({ message: "Portfolio item not found" });
+      const exp = await storage.getExperienceById(id);
+      if (!exp) {
+        return res.status(404).json({ message: "Experience not found" });
       }
-      res.json(item);
+      res.json(exp);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch portfolio item" });
+      res.status(500).json({ message: "Failed to fetch experience" });
     }
   });
 
-  // Case study routes
-  app.get("/api/case-studies", async (req, res) => {
+  // Projects routes
+  app.get("/api/projects", async (req, res) => {
     try {
-      const studies = await storage.getCaseStudies();
-      res.json(studies);
+      const featured = req.query.featured === 'true';
+      const projects = featured ? 
+        await storage.getFeaturedProjects() :
+        await storage.getProjects();
+      res.json(projects);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch case studies" });
+      res.status(500).json({ message: "Failed to fetch projects" });
     }
   });
 
-  app.get("/api/case-studies/:id", async (req, res) => {
+  app.get("/api/projects/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const study = await storage.getCaseStudy(id);
-      if (!study) {
-        return res.status(404).json({ message: "Case study not found" });
+      const project = await storage.getProjectById(id);
+      if (!project) {
+        return res.status(404).json({ message: "Project not found" });
       }
-      res.json(study);
+      res.json(project);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch case study" });
+      res.status(500).json({ message: "Failed to fetch project" });
     }
   });
 
-  app.get("/api/portfolio/:id/case-study", async (req, res) => {
+  // Education routes
+  app.get("/api/education", async (req, res) => {
     try {
-      const portfolioItemId = parseInt(req.params.id);
-      const study = await storage.getCaseStudyByPortfolioItem(portfolioItemId);
-      if (!study) {
-        return res.status(404).json({ message: "Case study not found for this portfolio item" });
-      }
-      res.json(study);
+      const education = await storage.getEducation();
+      res.json(education);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch case study" });
+      res.status(500).json({ message: "Failed to fetch education" });
+    }
+  });
+
+  // Certifications routes
+  app.get("/api/certifications", async (req, res) => {
+    try {
+      const certifications = await storage.getCertifications();
+      res.json(certifications);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch certifications" });
     }
   });
 
