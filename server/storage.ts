@@ -147,7 +147,7 @@ export class MemStorage implements IStorage {
 
     experienceData.forEach(exp => {
       const id = this.currentId++;
-      this.experienceData.set(id, { ...exp, id });
+      this.experienceData.set(id, { ...exp, id, endDate: exp.endDate || null });
     });
 
     // Projects Data
@@ -166,7 +166,13 @@ export class MemStorage implements IStorage {
 
     projectsData.forEach(project => {
       const id = this.currentId++;
-      this.projectsData.set(id, { ...project, id });
+      this.projectsData.set(id, { 
+        ...project, 
+        id, 
+        githubUrl: project.githubUrl || null,
+        liveUrl: project.liveUrl || null,
+        featured: project.featured ?? false
+      });
     });
 
     // Education Data
@@ -183,7 +189,7 @@ export class MemStorage implements IStorage {
 
     educationData.forEach(edu => {
       const id = this.currentId++;
-      this.educationData.set(id, { ...edu, id });
+      this.educationData.set(id, { ...edu, id, gpa: edu.gpa || null });
     });
 
     // Certifications Data
